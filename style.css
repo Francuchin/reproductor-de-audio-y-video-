@@ -1,0 +1,341 @@
+body{	
+	background-color: rgba(0,0,0,.1);
+}
+.bloqueo{
+	z-index: 100;
+	left: 0;
+	top: 0;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0,0,0,.5);
+	cursor: progress;
+}
+.bloqueo>.icono{
+	position: absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+}
+.etiquetaVolumen{
+	visibility: hidden;
+	color: red;
+}
+.etiquetaVolumen>div{
+	position: absolute;
+	bottom:10%;
+	left:50%;
+	font-size:5rem;
+	transform:translate(-50%,-50%);
+	padding-left: 10px;
+	padding-right: 10px;
+	border-radius: 15px;
+	border: 1px solid rgba(0,0,0,.3);
+    text-shadow: 2px 2px 4px #000000;
+    background-color: rgba(0,0,0,.3);
+}
+.mostrarVolumen{
+	animation-name: verVolumen;
+	animation-iteration-count: 1;
+	animation-duration: 4s;
+}
+@keyframes verVolumen {
+    1%   {
+    	visibility: hidden;
+    	opacity: 0;
+    }
+    2%{
+    	visibility: visible;
+    }
+    20%  {
+    	opacity: 1;
+    }
+    70%  {
+    	opacity: 1;
+    }
+    99% {
+    	opacity: 0;    
+    	visibility: hidden;	
+    }
+    100%{
+    	opacity: 0;  
+    }
+}
+
+
+reproductor{
+	z-index: -2;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+}
+
+.formularioNuevoIngreso{
+	width:300px;
+	height: 150px;
+	background: red;
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translate(-50% , -100%);
+	z-index: 101;
+	transition: transform .5s, top .5s;
+	border-radius: 5px;
+	border:dashed 2px rgba(0,0,0,.3);
+}
+
+.formularioNuevoIngreso>.btnCerrarBusqueda{
+
+}
+.formularioNuevoIngreso>.btnCerrarBusqueda:before{
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f00d";
+  transition:none;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  cursor: pointer;
+}
+.formularioNuevoIngreso>.aceptarBusqueda:hover{
+	width: 75%;
+	padding-bottom:1px;
+	box-shadow: 0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+}
+.formularioNuevoIngreso>.aceptarBusqueda{
+	position: absolute;
+	width: 70%;
+	bottom:0;
+	left: 50%;
+	transform: translate(-50%, -100%);
+	border:solid 1px rgba(0,0,0,.3);
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: center;
+	transition: box-shadow .6s, width .4s, padding .4s;
+}
+.formularioNuevoIngreso>input{
+	position: absolute;
+	width: 90%;
+	top:0;
+	left: 50%;
+	transform: translate(-50%, 100%);
+}
+
+.barraTiempo{
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 3px;
+	background-color: red; 
+	box-shadow: 0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+}
+.barraTiempo::after{
+	content: attr(tiempo);
+	/*float: right;*/
+	position: fixed;
+	left: 50%;
+	top: 0;
+	transform: translate(-50%, 100%);
+	padding: 3px;
+	border-radius: 5px;
+	border: 1px solid rgba(0,0,0,.3);
+    text-shadow: 2px 2px 4px #000;
+    background-color: rgba(0,0,0,.3);
+    opacity: 0;
+    transition: opacity 1s;
+}
+#video:hover + .barraTiempo::after{
+	opacity: 1;
+}
+.datos:before{
+	content: 'Configuracion de Color ';
+	display: block;
+}
+.datos{
+	width: 19%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	padding: 10px;
+	position: fixed;
+	box-sizing: border-box;
+	overflow-y: auto;
+	display: block;
+	text-align: center;
+}
+.datos>.agregar{
+	width: 100%;
+	cursor: pointer;
+	padding: 10px;
+	bottom: 0;
+	right: 0;
+	position: absolute;
+	text-align:center;
+	color: red;	
+    text-shadow: 2px 2px 4px #000;
+	border: 2px rgba(0,0,0,.2) dashed;
+    transition: all 1s;
+}
+.datos>.buscar{
+	width: 100%;
+	cursor: pointer;
+	padding: 10px;
+	bottom: 0;
+	right: 0;
+	position: absolute;
+	text-align:center;
+	color: red;	
+	transform: translateY(calc(-100% + 2px));
+    text-shadow: 2px 2px 4px #000;
+	border: 2px rgba(0,0,0,.2) dashed;
+    transition: all .2s;
+}
+.datos>.agregar:active,
+.datos>.buscar:active{
+    text-shadow: 1px 1px 5px #000;
+}
+.lista{
+	width: 19%;
+	height: 100%;
+	right: 0;
+	top: 0;
+	padding: 10px;
+	position: fixed;
+	box-sizing: border-box;
+	overflow-y: auto;
+	display: block;
+	counter-reset: contador-lista;
+}
+
+.lista>div:hover{
+	transform: scale(1.1 , 1.1);
+}
+.lista>div{
+	position: relative;
+	box-shadow: 0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+	background-color: rgba(0,0,0,.1);
+	margin-bottom: 5px;
+	margin-left: 3px;
+	margin-right: 3px;
+	padding: 7px;
+	transition: transform .3s;
+}
+.lista>div>div{
+	cursor: pointer;	
+}
+.lista>div>div:hover{
+	color: rgba(230,20,10,.7);
+}
+.lista>div:before{    
+    border-radius: 300px;
+    padding-right: 5px;
+    padding-left: 5px;
+    border: 1px solid;
+    content: counter(contador-lista);
+    counter-increment: contador-lista;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    opacity: .3;
+}
+.lista>div:nth-child(2n){
+	background-color: rgba(0,0,0,.2);
+}
+.lista>div>.borrarMediaLocal{
+	cursor: pointer;
+	z-index: 3;
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	transition: transform 2s;
+}
+.lista>div>.borrarMediaLocal:hover{
+	color: red;
+}
+.video{
+	position: absolute;
+	text-align: center;
+	vertical-align: middle;
+	width: 60%;
+	top: 50%;	
+	left: 50%;
+	transform: translate(-50% , -50%);
+	box-sizing: border-box;
+}
+.videoFull{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top:0;
+	left: 0;
+	background-color: rgba(0,0,0,.8);
+}
+.video>.cargando{
+	padding: 30px;
+	width: auto;
+	box-shadow: 0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+}
+.video>video{
+	cursor: crosshair;
+	height: 100%;
+	width: 100%;
+	display: block;
+	border-radius: 2px;
+	box-shadow: 0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);
+}
+.video>canvas{
+	z-index: -7;
+	position: absolute;
+	top:0;
+	left:0;
+	width: 100%;
+	height: 100%; 
+}
+.videoFull>canvas{
+	z-index: 1;
+	position: absolute;
+	top:0;
+	left:0;
+	width: 100%;
+	height: 100%; 
+}
+#video{
+	min-height: 200px;
+	transition: all .6s;
+}
+.videoFull>video{
+	cursor: crosshair;
+	width: 100%;
+	left: 0;
+	top:50%;
+	transform: translateY(-50%);
+	position: absolute;
+}
+.video>audio{
+	cursor: crosshair;
+	min-height: 250px;
+	z-index: 3;
+	height: 100%;
+	width: 100%;
+	display: block;
+	border-radius: 2px;
+	background-color: transparent;
+}
+.videoFull>audio{
+	cursor: crosshair;
+	width: 100%;
+	height: 100%;
+	z-index: 3;
+	left: 0;
+	top:50%;
+	transform: translateY(-50%);
+	position: absolute;
+}
