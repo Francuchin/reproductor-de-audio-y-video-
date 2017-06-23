@@ -472,12 +472,7 @@ function crearMedia(datos) {
         BarraTiempo.setAttribute('tiempo', minutos + ':' + segundos);
     });
     if (t == "audio") {
-        m.addEventListener("canplaythrough", function() {
-            var source = ctx.createMediaElementSource(m);
-            source.connect(analyser);
-            analyser.connect(ctx.destination);
-            console.log('conectado...');
-        });
+        m.addEventListener("canplaythrough", audio_canplaythrough);
         inputBarrasTam.removeAttribute('hidden');
         canvas.style.display = 'block';
     }
@@ -485,7 +480,13 @@ function crearMedia(datos) {
     return m;
 }
 
-/*---- AUDIO visualizacion ----*/
+function audio_canplaythrough() {
+    var source = ctx.createMediaElementSource(this);
+    source.connect(analyser);
+    analyser.connect(ctx.destination);
+    this.removeEventListener("canplaythrough", audio_canplaythrough);
+}
+/*---- AUDIO visualizacion ----
 
 function visualizacion() {
     WIDTH = canvas.width;
@@ -518,7 +519,73 @@ function visualizacion() {
     draw();
 };
 visualizacion();
+*/
+Number.prototype.map = function(in_min, in_max, out_min, out_max) {
+    return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+var giro = 0;
 
+function visualizacion() {
+    WIDTH = canvas.width;
+    HEIGHT = canvas.height;
+    canvasCtx = canvas.getContext('2d');
+    analyser.fftSize = Math.pow(2, TAMANIOBARRAS);
+    var bufferLength = analyser.frequencyBinCount;
+    var dataArray = new Uint8Array(bufferLength);
+    canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    function draw() {
+        drawVisual = window.requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(dataArray);
+        canvasCtx.fillStyle = BGN;
+        canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+        var barWidth = (WIDTH / bufferLength) + 1;
+        var barHeight;
+        var x = 0;
+        var maxGrados = 360,
+            centro = 10,
+            minBarra = 0,
+            maxBarra = HEIGHT / 2 - (centro + 3);
+
+        for (let i = 0; i <= maxGrados; i++) {
+            if (bufferLength < 2) {
+                window.cancelAnimationFrame(drawVisual);
+                break;
+            }
+            var ii = i + giro;
+            if (giro >= maxGrados) giro = 0;
+            giro++;
+            if (ii > maxGrados) ii -= maxGrados;
+            var rad = (Math.PI / 180) * ii;
+            var c = Math.cos(rad);
+            var s = Math.sin(rad);
+            var _i = parseInt(i.map(0, bufferLength, 0, maxGrados));
+            barHeight = dataArray[_i];
+            if (barHeight < 128)
+                barHeight = barHeight.map(0, 160, minBarra, maxBarra);
+            else
+                barHeight = barHeight.map(0, 256, minBarra, maxBarra);
+
+            var innerPointX = WIDTH / 2 + (centro * c);
+            var innerPointY = HEIGHT / 2 + (centro * s);
+            var outerPointX = WIDTH / 2 + (barHeight * c);
+            var outerPointY = HEIGHT / 2 + (barHeight * s);
+
+            var gradient = canvasCtx.createLinearGradient(innerPointX, innerPointY, outerPointX, outerPointY);
+            gradient.addColorStop("0", CT1);
+            gradient.addColorStop("" + (barHeight / 256), CT1);
+            gradient.addColorStop("1", CT2);
+            canvasCtx.beginPath();
+            canvasCtx.lineJoin = "round";
+            canvasCtx.moveTo(innerPointX, innerPointY);
+            canvasCtx.lineTo(outerPointX, outerPointY);
+            canvasCtx.strokeStyle = gradient;
+            canvasCtx.stroke();
+        }
+    };
+    draw();
+};
+visualizacion();
 /*---Teclado---*/
 document.addEventListener('keydown', function(e) {
     tecla = (document.all) ? e.keyCode : e.which;
